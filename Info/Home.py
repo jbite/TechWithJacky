@@ -10,10 +10,9 @@ with col1:
         st.image("images/myphoto.jpg",width=150)
     with col4:
         st.markdown(f"""**Name**: Jacky Feng\n
-**Phone**: {pInfo.PHONE}\n
+**Github**: {pInfo.GITHUB}\n
 **Email**: {pInfo.PERSONAL_EMAIL}""")
 
 with col2:
-    st.write(f"""Phone: {pInfo.PHONE}\n
-Email: {pInfo.PERSONAL_EMAIL}
+    st.info(f"""Hi, I am Jacky Feng, welcome to my inventory.
              """)
