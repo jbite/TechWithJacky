@@ -8,6 +8,6 @@ with col1:
     st.image("images/myphoto.jpg", caption="Hi there",width=150)
 
 with col2:
-    st.write(f"""Phone: {pInfo.PHONE}\n
+    st.write(f"""Github: {pInfo.GITHUB}\n
 Email: {pInfo.PERSONAL_EMAIL}
              """)
