@@ -14,5 +14,4 @@ with col1:
 **Email**: {pInfo.PERSONAL_EMAIL}""")
 
 with col2:
-    st.info(f"""Hi, I am Jacky Feng, welcome to my inventory.
-             """)
+    st.info(f"""Hi, I am Jacky Feng, welcome to my inventory.""")
