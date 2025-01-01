@@ -5,5 +5,5 @@ Day1Content = """
 - Complete a news summarize application with open API and reuqests
 
 """
-st.Title("LLM")
+st.title("LLM")
 st.write(Day1Content)
