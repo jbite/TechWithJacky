@@ -25,4 +25,6 @@ st.write("**2025-01-01**")
 st.write(Day1Content)
 
 
-st.title("")
+st.title(Day2Title)
+st.write("**2025-01-02**")
+st.write(Day2Content)
