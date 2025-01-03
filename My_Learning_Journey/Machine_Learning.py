@@ -1,5 +1,5 @@
 import streamlit as st
-
+from contents import LLM
 Day1Title = "Try LLM"
 Day1Content = """
 - Try Ollama locally
@@ -20,11 +20,15 @@ Day2Content = """
 - Compare to those models
 """
 st.title("LLM")
-st.header(Day1Title)
+st.header(LLM.Day1Title)
 st.write("**2025-01-01**")
-st.write(Day1Content)
+st.write(LLM.Day1Content)
 
 
-st.title(Day2Title)
+st.title(LLM.Day2Title)
 st.write("**2025-01-02**")
-st.write(Day2Content)
+st.write(LLM.Day2Content)
+
+st.title(LLM.Day3Title)
+st.write("**2025-01-03**")
+st.write(LLM.Day3Content)
