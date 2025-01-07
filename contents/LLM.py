@@ -100,7 +100,7 @@ else:
     print(f"Error: {response.status_code}, {response.text}")
 """
 
-Day9Title = "Introduce Tools"
+Day9Title = "Day 9 - Introduce Tools"
 Day9Content = """
 Tools
 allow frontier models to connect with external functions
