@@ -36,3 +36,9 @@ st.write(LLM.Day3Content)
 st.title(LLM.Day5Title)
 st.write("**2025-01-05**")
 st.code(LLM.Day5Content)
+
+
+st.title(LLM.Day9Title)
+st.write("**2025-01-07**")
+st.write(LLM.Day9Content)
+st.code(LLM.Day9Code)

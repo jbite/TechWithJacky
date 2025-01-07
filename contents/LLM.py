@@ -99,3 +99,72 @@ if response.status_code == 200:
 else:
     print(f"Error: {response.status_code}, {response.text}")
 """
+
+Day9Title = "Introduce Tools"
+Day9Content = """
+Tools
+allow frontier models to connect with external functions
+- richer repsonses by extending knowledgeability to carry out actions within the application
+enhanced capabilities , like calculations
+
+how it works
+- in a request to the llm, specify available tools
+- the reply is either text or a request to run a tools
+- we run the tool and call the LLM with the results
+
+Common use cases for Tools
+- Fetch data or add knowledge or context
+- Take action, like booking a meeting
+- Perform calculations
+- Modify the UI
+"""
+
+Day9Code = """
+#The Informed Airline Customer support agent
+# Let's start by making a useful function
+
+ticket_prices = {"london": "$799", "paris": "$899", "tokyo": "$1400", "berlin": "$499"}
+
+def get_ticket_price(destination_city):
+    print(f"Tool get_ticket_price called for {destination_city}")
+    city = destination_city.lower()
+    return ticket_prices.get(city, "Unknown")
+	
+# There's a particular dictionary structure that's required to describe our function:
+
+price_function = {
+    "name": "get_ticket_price",
+    "description": "Get the price of a return ticket to the destination city. Call this whenever you need to know the ticket price, for example when a customer asks 'How much is a ticket to this city'",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "destination_city": {
+                "type": "string",
+                "description": "The city that the customer wants to travel to",
+            },
+        },
+        "required": ["destination_city"],
+        "additionalProperties": False
+    }
+}
+
+# And this is included in a list of tools:
+
+tools = [{"type": "function", "function": price_function}]
+
+# We have to write that function handle_tool_call:
+
+def handle_tool_call(message):
+    tool_call = message.tool_calls[0]
+    arguments = json.loads(tool_call.function.arguments)
+    city = arguments.get('destination_city')
+    price = get_ticket_price(city)
+    response = {
+        "role": "tool",
+        "content": json.dumps({"destination_city": city,"price": price}),
+        "tool_call_id": tool_call.id
+    }
+    return response, city
+
+gr.ChatInterface(fn=chat, type="messages").launch()
+"""
