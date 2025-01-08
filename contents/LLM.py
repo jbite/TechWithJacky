@@ -168,3 +168,99 @@ def handle_tool_call(message):
 
 gr.ChatInterface(fn=chat, type="messages").launch()
 """
+Day10Title="Day 10 - multi modal AI agent"
+
+Day10Content = """
+Hello everyone, and welcome. Today, we're diving into the fascinating world of software agents – intelligent entities designed to operate independently and tackle complex tasks. Think of them as digital assistants with specific skill sets.
+
+Let's break down what defines an agent. At its core, an agent is a software entity capable of autonomously performing tasks. This autonomy is crucial; it means they can operate without constant human intervention. They're also goal-oriented, meaning they have a specific objective they're trying to achieve. And finally, they're typically task-specific, meaning they're designed to excel at a particular type of job.   
+
+Now, while these core characteristics are important, more sophisticated agents, especially those designed to handle complex problems, possess additional capabilities. These capabilities allow them to function within an "agent framework," a collaborative environment where multiple agents can work together. Let's explore some of these key features:   
+
+Memory/Persistence: A good agent doesn't forget. It retains information about past interactions, learned experiences, and the current state of its task. This "memory" allows for more efficient and context-aware performance. Think of it like remembering a conversation from earlier – it allows for more natural and relevant follow-up.   
+Decision-Making/Orchestration: Agents need to make choices. They need to decide which actions to take, when to take them, and how to adapt to changing circumstances. In an agent framework, this also involves "orchestration" – coordinating the activities of multiple agents to achieve a common goal. It's like a conductor leading an orchestra, ensuring each instrument plays its part at the right time.   
+Planning Capabilities: Agents are often required to plan ahead. This involves anticipating future needs, setting sub-goals, and outlining a sequence of actions to achieve the overall objective. Planning gives agents a sense of direction and allows them to tackle more complex, multi-step tasks. Imagine planning a road trip – you wouldn't just start driving without a map or destination in mind.   
+Use of Tools: This is where things get really interesting. Agents can leverage external tools and resources to enhance their capabilities. This could involve connecting to databases to retrieve information, accessing the internet for real-time data, or using specific software applications to perform specialized functions. This ability to use tools is what makes agents truly powerful and versatile.   
+So, how are we going to put this knowledge into practice? We have three exciting activities planned:
+
+Image Generation: We'll start by exploring the OpenAI interface to generate images. This will give us a tangible example of how AI can create visual content based on textual prompts. This is a very powerful example of an agent using a tool (the image generation model) to achieve a task.
+Making Agents: We'll then create our own agents designed to generate both sound and images for a hypothetical store. This will involve designing agents with specific goals and capabilities, giving us hands-on experience in agent development.
+Making an Agent Framework: Finally, we'll delve into building a simple agent framework. We'll teach our AI assistant to both "speak" (generate text) and "draw" (generate images), demonstrating how multiple agents can collaborate within a framework to achieve a more complex, multi-modal output.
+By the end of this session, you'll have a solid understanding of what agents are, how they work, and how they can be used to solve real-world problems. You'll also have practical experience in creating and using agents, setting you on the path to becoming proficient in this exciting field. Remember, the key is to think about how to break down complex tasks into smaller, manageable sub-tasks that can be assigned to specialized agents working together. This is the essence of the agent framework approach. Let's begin!"""
+
+Day10Code="""
+# Some imports for handling images
+
+import base64
+from io import BytesIO
+from PIL import Image
+
+def artist(city):
+    image_response = openai.images.generate(
+            model="dall-e-3",
+            prompt=f"An image representing a vacation in {city}, showing tourist spots and everything unique about {city}, in a vibrant pop-art style",
+            size="1024x1024",
+            n=1,
+            response_format="b64_json",
+        )
+    image_base64 = image_response.data[0].b64_json
+    image_data = base64.b64decode(image_base64)
+    return Image.open(BytesIO(image_data))
+from pydub import AudioSegment
+from pydub.playback import play
+
+def talker(message):
+    response = openai.audio.speech.create(
+      model="tts-1",
+      voice="onyx",    # Also, try replacing onyx with alloy
+      input=message
+    )
+    
+    audio_stream = BytesIO(response.content)
+    audio = AudioSegment.from_file(audio_stream, format="mp3")
+    play(audio)
+
+def chat(history):
+    messages = [{"role": "system", "content": system_message}] + history
+    response = openai.chat.completions.create(model=MODEL, messages=messages, tools=tools)
+    image = None
+    
+    if response.choices[0].finish_reason=="tool_calls":
+        message = response.choices[0].message
+        response, city = handle_tool_call(message)
+        messages.append(message)
+        messages.append(response)
+        image = artist(city)
+        response = openai.chat.completions.create(model=MODEL, messages=messages)
+        
+    reply = response.choices[0].message.content
+    history += [{"role":"assistant", "content":reply}]
+
+    # Comment out or delete the next line if you'd rather skip Audio for now..
+    talker(reply)
+    
+    return history, image
+# More involved Gradio code as we're not using the preset Chat interface!
+# Passing in inbrowser=True in the last line will cause a Gradio window to pop up immediately.
+
+with gr.Blocks() as ui:
+    with gr.Row():
+        chatbot = gr.Chatbot(height=500, type="messages")
+        image_output = gr.Image(height=500)
+    with gr.Row():
+        entry = gr.Textbox(label="Chat with our AI Assistant:")
+    with gr.Row():
+        clear = gr.Button("Clear")
+
+    def do_entry(message, history):
+        history += [{"role":"user", "content":message}]
+        return "", history
+
+    entry.submit(do_entry, inputs=[entry, chatbot], outputs=[entry, chatbot]).then(
+        chat, inputs=chatbot, outputs=[chatbot, image_output]
+    )
+    clear.click(lambda: None, inputs=None, outputs=chatbot, queue=False)
+
+ui.launch(inbrowser=True)
+
+"""
